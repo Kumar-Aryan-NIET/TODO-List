@@ -12,7 +12,7 @@ const ClientTodosList = () => {
     setError('');
     setLoading(true);
     try {
-      const response = await api.get(`/todos/admin/client-todos?page=${pageNum}`);
+      const response = await api.get(`api/todos/admin/client-todos?page=${pageNum}`);
       setTodos(response.data.todos);
       setPage(response.data.page);
       setTotalPages(response.data.totalPages);

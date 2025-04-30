@@ -13,7 +13,7 @@ const ChangePassword = () => {
     setError('');
     setLoading(true);
     try {
-      await api.put('/auth/change-password', { password });
+      await api.put('/api/user/change-password', { password });
       setMessage('Password changed successfully');
       setPassword('');
     } catch (err) {

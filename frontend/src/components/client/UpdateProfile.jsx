@@ -13,7 +13,7 @@ const UpdateProfile = () => {
   const fetchProfile = async () => {
     setError('');
     try {
-      const response = await api.get('/user/profile');
+      const response = await api.get('api/user/profile');
       setName(response.data.name);
       setPhone(response.data.phone);
       console.log(response.data);

@@ -19,7 +19,7 @@ const Register = () => {
     setSuccess('');
     setLoading(true);
     try {
-      await api.post('/auth/register', { name, email, phone, password, role });
+      await api.post('api/auth/register', { name, email, phone, password, role });
       setSuccess('Registration successful. You can now login.');
       setTimeout(() => {
         navigate('/login');

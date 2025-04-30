@@ -14,7 +14,7 @@ const CreateTodo = () => {
     setError('');
     setLoading(true);
     try {
-      await api.post('/todos', { title, description });
+      await api.post('/api/todos', { title, description });
       setMessage('TODO created successfully');
       setTitle('');
       setDescription('');
