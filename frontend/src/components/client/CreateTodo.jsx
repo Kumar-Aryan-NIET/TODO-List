@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../../utils/api';
 import { getToken } from '../../utils/auth';
 
 const CreateTodo = () => {
@@ -14,7 +14,7 @@ const CreateTodo = () => {
     setError('');
     try {
       const token = getToken();
-      await axios.post(
+      await api.post(
         '/api/todos',
         { title, description },
         { headers: { Authorization: `Bearer ${token}` } }

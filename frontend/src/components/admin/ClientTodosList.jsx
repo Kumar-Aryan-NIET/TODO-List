@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../../utils/api';
 import { getToken } from '../../utils/auth';
 
 const ClientTodosList = () => {
@@ -12,7 +12,7 @@ const ClientTodosList = () => {
     setError('');
     try {
       const token = getToken();
-      const response = await axios.get(`/api/todos/admin/client-todos?page=${pageNum}`, {
+      const response = await api.get(`/api/todos/admin/client-todos?page=${pageNum}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setTodos(response.data.todos);
