@@ -10,20 +10,24 @@ const Register = () => {
   const [role, setRole] = useState(1); // default to client
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
+    setLoading(true);
     try {
-      await api.post('/api/auth/register', { name, email, phone, password, role });
+      await api.post('/auth/register', { name, email, phone, password, role });
       setSuccess('Registration successful. You can now login.');
       setTimeout(() => {
         navigate('/login');
       }, 2000);
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -87,9 +91,10 @@ const Register = () => {
           </div>
           <button
             type="submit"
-            className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
+            className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition disabled:opacity-50"
+            disabled={loading}
           >
-            Register
+            {loading ? 'Registering...' : 'Register'}
           </button>
         </form>
         <p className="mt-4 text-center">

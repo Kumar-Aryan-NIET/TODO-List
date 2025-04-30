@@ -1,29 +1,28 @@
 import React, { useState } from 'react';
+import React, { useState } from 'react';
 import api from '../../utils/api';
-import { getToken } from '../../utils/auth';
 
 const CreateTodo = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage('');
     setError('');
+    setLoading(true);
     try {
-      const token = getToken();
-      await api.post(
-        '/api/todos',
-        { title, description },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await api.post('/todos', { title, description });
       setMessage('TODO created successfully');
       setTitle('');
       setDescription('');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to create TODO');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -54,9 +53,10 @@ const CreateTodo = () => {
         </div>
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition disabled:opacity-50"
+          disabled={loading}
         >
-          Create
+          {loading ? 'Creating...' : 'Create'}
         </button>
       </form>
     </div>

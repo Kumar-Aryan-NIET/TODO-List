@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { getToken, getUserName, setUserName } from '../../utils/auth';
+import React, { useState, useEffect } from 'react';
+import api from '../../utils/api';
+import { getUserName, setUserName } from '../../utils/auth';
 
 const UpdateProfile = () => {
   const [name, setName] = useState(getUserName() || '');
@@ -8,14 +9,12 @@ const UpdateProfile = () => {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const fetchProfile = async () => {
     setError('');
     try {
-      const token = getToken();
-      const response = await axios.get('/api/user/profile', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await api.get('/user/profile');
       setName(response.data.name);
       setPhone(response.data.phone);
       console.log(response.data);
@@ -32,18 +31,16 @@ const UpdateProfile = () => {
     e.preventDefault();
     setMessage('');
     setError('');
+    setLoading(true);
     try {
-      const token = getToken();
-      await axios.put(
-        '/api/user/profile',
-        { name, phone, password: password || undefined },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await api.put('/user/profile', { name, phone, password: password || undefined });
       setMessage('Profile updated successfully');
       setPassword('');
       setUserName(name);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to update profile');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -85,9 +82,10 @@ const UpdateProfile = () => {
         </div>
         <button
           type="submit"
-          className="w-full bg-yellow-600 text-white py-2 rounded hover:bg-yellow-700 transition"
+          className="w-full bg-yellow-600 text-white py-2 rounded hover:bg-yellow-700 transition disabled:opacity-50"
+          disabled={loading}
         >
-          Update Profile
+          {loading ? 'Updating...' : 'Update Profile'}
         </button>
       </form>
     </div>

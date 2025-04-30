@@ -1,25 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../utils/api';
-import { getToken } from '../../utils/auth';
 
 const ClientTodosList = () => {
   const [todos, setTodos] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const fetchTodos = async (pageNum) => {
     setError('');
+    setLoading(true);
     try {
-      const token = getToken();
-      const response = await api.get(`/api/todos/admin/client-todos?page=${pageNum}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await api.get(`/todos/admin/client-todos?page=${pageNum}`);
       setTodos(response.data.todos);
       setPage(response.data.page);
       setTotalPages(response.data.totalPages);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to fetch client TODOs');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -39,7 +39,9 @@ const ClientTodosList = () => {
     <div className="max-w-5xl mx-auto bg-white p-6 rounded shadow">
       <h2 className="text-xl font-semibold mb-4">Client TODO List</h2>
       {error && <p className="text-red-600 mb-4">{error}</p>}
-      {todos.length === 0 ? (
+      {loading ? (
+        <p>Loading...</p>
+      ) : todos.length === 0 ? (
         <p>No TODOs found.</p>
       ) : (
         <>
@@ -70,7 +72,7 @@ const ClientTodosList = () => {
           <div className="mt-4 flex justify-between">
             <button
               onClick={handlePrev}
-              disabled={page === 1}
+              disabled={page === 1 || loading}
               className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
             >
               Previous
@@ -80,7 +82,7 @@ const ClientTodosList = () => {
             </span>
             <button
               onClick={handleNext}
-              disabled={page === totalPages}
+              disabled={page === totalPages || loading}
               className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
             >
               Next

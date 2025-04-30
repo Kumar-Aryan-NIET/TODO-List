@@ -1,27 +1,26 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { getToken } from '../../utils/auth';
+import React, { useState } from 'react';
+import api from '../../utils/api';
 
 const ChangePassword = () => {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage('');
     setError('');
+    setLoading(true);
     try {
-      const token = getToken();
-      await axios.put(
-        '/api/auth/change-password',
-        { password },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await api.put('/auth/change-password', { password });
       setMessage('Password changed successfully');
       setPassword('');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to change password');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -43,9 +42,10 @@ const ChangePassword = () => {
         </div>
         <button
           type="submit"
-          className="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition"
+          className="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition disabled:opacity-50"
+          disabled={loading}
         >
-          Change Password
+          {loading ? 'Changing...' : 'Change Password'}
         </button>
       </form>
     </div>
